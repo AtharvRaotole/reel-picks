@@ -58,12 +58,16 @@ export function useRecentlyViewed() {
   // Load on mount and listen for changes
   useEffect(() => {
     const loadData = () => {
-      const loaded = loadRecentlyViewed();
-      setRecentlyViewed(loaded);
+      // Defer state update to avoid updating during render
+      setTimeout(() => {
+        const loaded = loadRecentlyViewed();
+        setRecentlyViewed(loaded);
+      }, 0);
     };
 
     // Initial load
-    loadData();
+    const loaded = loadRecentlyViewed();
+    setRecentlyViewed(loaded);
 
     // Listen for storage changes (from other tabs/windows)
     window.addEventListener('storage', loadData);
@@ -96,9 +100,11 @@ export function useRecentlyViewed() {
 
       saveRecentlyViewed(updated);
       
-      // Dispatch custom event to notify other components
+      // Dispatch custom event to notify other components (defer to avoid render issues)
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('recentlyViewedUpdated'));
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('recentlyViewedUpdated'));
+        }, 0);
       }
       
       return updated;
@@ -112,9 +118,11 @@ export function useRecentlyViewed() {
     setRecentlyViewed([]);
     saveRecentlyViewed([]);
     
-    // Dispatch custom event to notify other components
+    // Dispatch custom event to notify other components (defer to avoid render issues)
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('recentlyViewedUpdated'));
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('recentlyViewedUpdated'));
+      }, 0);
     }
   }, []);
 
@@ -126,9 +134,11 @@ export function useRecentlyViewed() {
       const updated = current.filter((item) => item.movie.id !== movieId);
       saveRecentlyViewed(updated);
       
-      // Dispatch custom event to notify other components
+      // Dispatch custom event to notify other components (defer to avoid render issues)
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('recentlyViewedUpdated'));
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('recentlyViewedUpdated'));
+        }, 0);
       }
       
       return updated;
