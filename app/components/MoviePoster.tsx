@@ -166,7 +166,7 @@ export default function MoviePoster({
     <div
       ref={size === 'large' ? parallaxRef : null}
       className={clsx(
-        'relative w-full bg-neutral-800 overflow-hidden',
+        'relative w-full bg-neutral-100 overflow-hidden',
         aspectRatio,
         className
       )}

@@ -1,12 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { useMovieSearch } from '@/app/lib/hooks/useMovieSearch';
 import { Movie } from '@/app/types/movie';
 import { Input, Card, Badge, EmptyState } from '@/app/components/ui';
 import MovieCardSkeleton from '@/app/components/MovieCardSkeleton';
 import MoviePoster from '@/app/components/MoviePoster';
+import MovieDetails from '@/app/components/MovieDetails';
 import { AlertCircle } from 'lucide-react';
-import Link from 'next/link';
 
 /**
  * Extracts the year from a release date string.
@@ -43,22 +44,21 @@ function truncateText(text: string, maxLength: number): string {
 interface MovieCardProps {
   movie: Movie;
   priority?: boolean;
+  onClick: () => void;
 }
 
-function MovieCard({ movie, priority = false }: MovieCardProps) {
+function MovieCard({ movie, priority = false, onClick }: MovieCardProps) {
   const year = getYear(movie.releaseDate);
   const rating = movie.voteAverage ? movie.voteAverage.toFixed(1) : 'N/A';
 
   return (
-    <Link 
-      href={`/movies/${movie.id}`}
+    <Card
+      hover
+      interactive
+      onClick={onClick}
+      className="group overflow-hidden h-full flex flex-col cursor-pointer"
       aria-label={`View details for ${movie.title}${year ? ` (${year})` : ''}`}
     >
-      <Card
-        hover
-        interactive
-        className="group overflow-hidden h-full flex flex-col"
-      >
         {/* Poster Image */}
         <div className="relative">
           <MoviePoster
@@ -82,27 +82,26 @@ function MovieCard({ movie, priority = false }: MovieCardProps) {
         </div>
 
         {/* Movie Info */}
-        <div className="p-3 sm:p-4 flex-1 flex flex-col">
-          <h3 className="text-base sm:text-lg font-semibold text-white mb-1 line-clamp-2 group-hover:text-primary-400 transition-colors leading-tight">
+        <div className="p-4 flex-1 flex flex-col">
+          <h3 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white mb-2 line-clamp-2 group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors leading-tight" style={{ fontFamily: 'var(--font-playfair), serif' }}>
             {movie.title}
           </h3>
           
-          <div className="flex items-center gap-2 mb-2 text-xs sm:text-sm text-neutral-400">
+          <div className="flex items-center gap-2 mb-2 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
             {year && <span>{year}</span>}
-            {year && movie.voteCount && movie.voteCount > 0 && <span>•</span>}
+            {year && movie.voteCount && movie.voteCount > 0 && <span aria-hidden="true">•</span>}
             {movie.voteCount && movie.voteCount > 0 && (
               <span>{movie.voteCount.toLocaleString()} votes</span>
             )}
           </div>
 
           {movie.overview && (
-            <p className="text-xs sm:text-sm text-neutral-400 line-clamp-3 flex-1 leading-relaxed">
+            <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 line-clamp-3 flex-1 leading-relaxed">
               {truncateText(movie.overview, 120)}
             </p>
           )}
         </div>
       </Card>
-    </Link>
   );
 }
 
@@ -120,6 +119,14 @@ export default function MovieSearch() {
     search,
     clearSearch,
   } = useMovieSearch();
+
+  const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
+  const handleMovieClick = (movieId: number) => {
+    setSelectedMovieId(movieId);
+    setIsDetailsModalOpen(true);
+  };
 
   return (
     <div className="w-full">
@@ -141,7 +148,7 @@ export default function MovieSearch() {
       {loading && (
         <div>
           <div className="mb-6">
-            <div className="h-5 bg-neutral-800 rounded w-48 animate-pulse" />
+            <div className="h-5 bg-neutral-200 dark:bg-neutral-800 rounded w-48 animate-pulse" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -193,12 +200,12 @@ export default function MovieSearch() {
         <div>
           {/* Results Count */}
           <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <p className="text-sm sm:text-base text-neutral-400">
-              Found <span className="text-white font-semibold">{results.totalResults.toLocaleString()}</span>{' '}
+            <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
+              Found <span className="text-neutral-900 dark:text-white font-semibold">{results.totalResults.toLocaleString()}</span>{' '}
               {results.totalResults === 1 ? 'movie' : 'movies'}
             </p>
             {results.totalPages > 1 && (
-              <p className="text-xs sm:text-sm text-neutral-500">
+              <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-500">
                 Page {results.page} of {results.totalPages}
               </p>
             )}
@@ -211,11 +218,22 @@ export default function MovieSearch() {
                 key={movie.id} 
                 movie={movie}
                 priority={index < 4}
+                onClick={() => handleMovieClick(Number(movie.id))}
               />
             ))}
           </div>
         </div>
       )}
+
+      {/* Movie Details Modal */}
+      <MovieDetails
+        movieId={selectedMovieId}
+        isOpen={isDetailsModalOpen}
+        onClose={() => {
+          setIsDetailsModalOpen(false);
+          setSelectedMovieId(null);
+        }}
+      />
     </div>
   );
 }

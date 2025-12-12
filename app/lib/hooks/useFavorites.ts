@@ -122,8 +122,10 @@ function saveFavoritesToStorage(favorites: StoredFavorite[]): boolean {
   try {
     localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
     
-    // Dispatch custom event for other components to listen to
-    window.dispatchEvent(new Event('favoritesUpdated'));
+    // Dispatch custom event asynchronously to avoid React render warnings
+    setTimeout(() => {
+      window.dispatchEvent(new Event('favoritesUpdated'));
+    }, 0);
     
     return true;
   } catch (error) {
@@ -204,14 +206,17 @@ export function useFavorites(): UseFavoritesReturn {
   // Listen for custom favoritesUpdated event (same tab)
   useEffect(() => {
     const handleFavoritesUpdated = () => {
-      try {
-        const loadedFavorites = loadFavoritesFromStorage();
-        setFavorites(loadedFavorites);
-        setError(null);
-      } catch (err) {
-        const error = err instanceof Error ? err : new Error('Failed to sync favorites');
-        setError(error);
-      }
+      // Use setTimeout to defer state update and avoid React render warnings
+      setTimeout(() => {
+        try {
+          const loadedFavorites = loadFavoritesFromStorage();
+          setFavorites(loadedFavorites);
+          setError(null);
+        } catch (err) {
+          const error = err instanceof Error ? err : new Error('Failed to sync favorites');
+          setError(error);
+        }
+      }, 0);
     };
 
     window.addEventListener('favoritesUpdated', handleFavoritesUpdated);

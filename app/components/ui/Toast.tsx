@@ -78,28 +78,28 @@ function ToastItem({ toast, onDismiss }: ToastProps) {
     switch (toast.type) {
       case 'success':
         return {
-          bg: 'bg-success-500/20 border-success-500/30',
-          text: 'text-white',
-          icon: 'text-success-400',
+          bg: 'bg-success-500/10 border-success-500/30',
+          text: 'text-neutral-900',
+          icon: 'text-success-600',
         };
       case 'error':
         return {
-          bg: 'bg-error-500/20 border-error-500/30',
-          text: 'text-white',
-          icon: 'text-error-400',
+          bg: 'bg-error-500/10 border-error-500/30',
+          text: 'text-neutral-900',
+          icon: 'text-error-600',
         };
       case 'warning':
         return {
-          bg: 'bg-primary-500/20 border-primary-500/30',
-          text: 'text-white',
-          icon: 'text-primary-400',
+          bg: 'bg-amber-500/10 border-amber-500/30',
+          text: 'text-neutral-900',
+          icon: 'text-amber-600',
         };
       case 'info':
       default:
         return {
-          bg: 'bg-accent-500/20 border-accent-500/30',
-          text: 'text-white',
-          icon: 'text-accent-400',
+          bg: 'bg-accent-500/10 border-accent-500/30',
+          text: 'text-neutral-900',
+          icon: 'text-accent-600',
         };
     }
   };
@@ -125,7 +125,7 @@ function ToastItem({ toast, onDismiss }: ToastProps) {
       <div className={clsx('flex-shrink-0', styles.icon)}>{getIcon()}</div>
 
       {/* Message */}
-      <p className={clsx('flex-1 text-xs sm:text-sm font-medium leading-relaxed text-white', styles.text)}>
+      <p className={clsx('flex-1 text-xs sm:text-sm font-medium leading-relaxed text-neutral-900', styles.text)}>
         {toast.message}
       </p>
 

@@ -13,20 +13,20 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
     ref
   ) => {
     const baseStyles =
-      'rounded-xl transition-all duration-300 bg-neutral-900 border border-neutral-800';
+      'rounded-lg transition-all duration-300 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800';
 
     const variants = {
-      default: 'bg-neutral-900',
-      elevated: 'bg-neutral-800 shadow-lg',
-      outlined: 'bg-transparent border-2',
+      default: 'bg-white dark:bg-neutral-900',
+      elevated: 'bg-white dark:bg-neutral-900 shadow-md dark:shadow-lg dark:shadow-black/50',
+      outlined: 'bg-transparent border-2 border-neutral-300 dark:border-neutral-700',
     };
 
     const hoverStyles = hover
-      ? 'hover:scale-[1.02] hover:shadow-xl hover:shadow-primary-500/10 hover:border-neutral-700'
+      ? 'hover:shadow-lg dark:hover:shadow-xl dark:hover:shadow-black/50 hover:border-neutral-300 dark:hover:border-neutral-700 hover:-translate-y-0.5'
       : '';
 
     const interactiveStyles = interactive
-      ? 'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950'
+      ? 'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2'
       : '';
 
     const handleKeyDown = interactive
@@ -60,4 +60,3 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
 Card.displayName = 'Card';
 
 export default Card;
-

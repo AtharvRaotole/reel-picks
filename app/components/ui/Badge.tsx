@@ -26,12 +26,12 @@ const Badge = forwardRef<HTMLDivElement, BadgeProps>(
       'inline-flex items-center justify-center font-semibold rounded-full transition-all duration-200';
 
     const variants = {
-      default: 'bg-neutral-800 text-neutral-200',
-      primary: 'bg-primary-500/20 text-primary-400 border border-primary-500/30',
-      secondary: 'bg-secondary-500/20 text-secondary-400 border border-secondary-500/30',
-      accent: 'bg-accent-500/20 text-accent-400 border border-accent-500/30',
-      success: 'bg-success-500/20 text-success-400 border border-success-500/30',
-      error: 'bg-error-500/20 text-error-400 border border-error-500/30',
+      default: 'bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300',
+      primary: 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900',
+      secondary: 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-white',
+      accent: 'bg-accent-500/10 dark:bg-accent-500/20 text-accent-600 dark:text-accent-400 border border-accent-500/20 dark:border-accent-500/40',
+      success: 'bg-success-500/10 dark:bg-success-500/20 text-success-600 dark:text-success-400 border border-success-500/20 dark:border-success-500/40',
+      error: 'bg-error-500/10 dark:bg-error-500/20 text-error-600 dark:text-error-400 border border-error-500/20 dark:border-error-500/40',
     };
 
     const sizes = {
@@ -62,4 +62,3 @@ const Badge = forwardRef<HTMLDivElement, BadgeProps>(
 Badge.displayName = 'Badge';
 
 export default Badge;
-

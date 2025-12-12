@@ -77,8 +77,8 @@ function StarRating({ value, onChange, disabled = false }: StarRatingProps) {
             className={clsx(
               'h-6 w-6 transition-all duration-200',
               rating <= displayRating
-                ? 'fill-primary-500 text-primary-500'
-                : 'fill-none text-neutral-600',
+                ? 'fill-accent-500 text-accent-500'
+                : 'fill-none text-neutral-300',
               !disabled && 'hover:scale-110'
             )}
             aria-hidden="true"
@@ -86,7 +86,7 @@ function StarRating({ value, onChange, disabled = false }: StarRatingProps) {
         </button>
       ))}
       {value > 0 && (
-        <span className="ml-2 text-sm text-neutral-400" aria-live="polite">
+        <span className="ml-2 text-sm text-neutral-600" aria-live="polite">
           {value}/5
         </span>
       )}
@@ -103,21 +103,21 @@ function MovieDetailsSkeleton() {
       <div className="flex flex-col md:flex-row gap-6">
         {/* Poster Skeleton */}
         <div className="w-full md:w-64 flex-shrink-0">
-          <div className="aspect-[2/3] bg-neutral-800 rounded-lg" />
+          <div className="aspect-[2/3] bg-neutral-200 dark:bg-neutral-800 rounded-lg" />
         </div>
 
         {/* Content Skeleton */}
         <div className="flex-1 space-y-4">
-          <div className="h-8 bg-neutral-800 rounded w-3/4" />
-          <div className="h-4 bg-neutral-800 rounded w-1/2" />
+          <div className="h-8 bg-neutral-200 dark:bg-neutral-800 rounded w-3/4" />
+          <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-1/2" />
           <div className="flex gap-2">
-            <div className="h-6 bg-neutral-800 rounded w-16" />
-            <div className="h-6 bg-neutral-800 rounded w-16" />
+            <div className="h-6 bg-neutral-200 dark:bg-neutral-800 rounded w-16" />
+            <div className="h-6 bg-neutral-200 dark:bg-neutral-800 rounded w-16" />
           </div>
           <div className="space-y-2">
-            <div className="h-4 bg-neutral-800 rounded" />
-            <div className="h-4 bg-neutral-800 rounded w-5/6" />
-            <div className="h-4 bg-neutral-800 rounded w-4/6" />
+            <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded" />
+            <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-5/6" />
+            <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-4/6" />
           </div>
         </div>
       </div>
@@ -336,10 +336,10 @@ export default function MovieDetails({
             <div className="mb-4">
               <X className="h-12 w-12 text-error-500 mx-auto" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">
+            <h3 className="text-xl font-semibold text-neutral-900 mb-2">
               Failed to Load Movie
             </h3>
-            <p className="text-neutral-300 mb-6">{error.message}</p>
+            <p className="text-neutral-600 mb-6">{error.message}</p>
             <Button variant="primary" onClick={onClose}>
               Close
             </Button>
@@ -368,10 +368,10 @@ export default function MovieDetails({
               <div className="flex-1 space-y-3 sm:space-y-4">
                 {/* Title and Year */}
                 <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 leading-tight">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white mb-3 leading-tight" style={{ fontFamily: 'var(--font-playfair), serif' }}>
                     {movie.title}
                   </h2>
-                  <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-sm sm:text-base text-neutral-400">
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-sm sm:text-base text-neutral-700 dark:text-neutral-300 font-sans">
                     {year && (
                       <div className="flex items-center gap-1.5">
                         <Calendar className="h-4 w-4" />
@@ -406,10 +406,10 @@ export default function MovieDetails({
                 {/* Overview */}
                 {movie.overview && (
                   <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white mb-2">
+                    <h3 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white mb-2 font-sans">
                       Overview
                     </h3>
-                    <p className="text-sm sm:text-base text-neutral-200 leading-relaxed">
+                    <p className="text-sm sm:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed font-sans">
                       {movie.overview}
                     </p>
                   </div>
@@ -417,13 +417,13 @@ export default function MovieDetails({
 
                 {/* Tagline */}
                 {movie.tagline && (
-                  <div className="italic text-neutral-300 border-l-4 border-primary-500 pl-4">
+                  <div className="italic text-neutral-700 dark:text-neutral-300 border-l-4 border-accent-500 pl-4 bg-neutral-50 dark:bg-neutral-900 py-2 rounded-r font-sans">
                     &ldquo;{movie.tagline}&rdquo;
                   </div>
                 )}
 
                 {/* Favorite Actions */}
-                <div className="pt-4 border-t border-neutral-800 space-y-4">
+                <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 space-y-4">
                   <div className="flex items-center gap-3">
                     <Button
                       variant={favorited ? 'secondary' : 'primary'}
@@ -448,16 +448,16 @@ export default function MovieDetails({
 
                   {/* Rating and Notes (shown when favorited) */}
                   {favorited && (
-                    <div className="space-y-4 pt-4 border-t border-neutral-800">
+                    <div className="space-y-4 pt-4 border-t border-neutral-200 dark:border-neutral-800">
                       {/* Rating */}
                       <div>
                         <label 
                           htmlFor="movie-rating"
-                          className="block text-sm sm:text-base font-medium text-neutral-300 mb-2"
+                          className="block text-sm sm:text-base font-medium text-neutral-900 dark:text-white mb-2 font-sans"
                         >
                           Your Rating
                           {isRatingUpdating && (
-                            <span className="ml-2 text-xs text-neutral-400" aria-live="polite">
+                            <span className="ml-2 text-xs text-neutral-500 dark:text-neutral-400 font-sans" aria-live="polite">
                               Saving...
                             </span>
                           )}
@@ -480,11 +480,11 @@ export default function MovieDetails({
                       <div>
                         <label
                           htmlFor="movie-notes"
-                          className="block text-sm sm:text-base font-medium text-neutral-300 mb-2"
+                          className="block text-sm sm:text-base font-medium text-neutral-900 dark:text-white mb-2 font-sans"
                         >
                           Your Notes
                           {isNotesUpdating && (
-                            <span className="ml-2 text-xs text-neutral-400" aria-live="polite">
+                            <span className="ml-2 text-xs text-neutral-500 dark:text-neutral-400 font-sans" aria-live="polite">
                               Saving...
                             </span>
                           )}
@@ -499,7 +499,7 @@ export default function MovieDetails({
                           aria-label="Movie notes"
                           aria-describedby="notes-description"
                           className={clsx(
-                            'w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 sm:px-4 py-2.5 text-sm sm:text-base text-white placeholder:text-neutral-500 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-transparent transition-all duration-200 resize-none min-h-[100px]',
+                            'w-full rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 sm:px-4 py-2.5 text-sm sm:text-base text-neutral-900 dark:text-white placeholder:text-neutral-400 dark:placeholder:text-neutral-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:border-accent-500 transition-all duration-200 resize-none min-h-[100px]',
                             isNotesUpdating && 'opacity-60 cursor-wait'
                           )}
                         />
@@ -518,19 +518,19 @@ export default function MovieDetails({
               movie.revenue ||
               movie.productionCompanies?.length ||
               movie.productionCountries?.length) && (
-              <div className="pt-4 sm:pt-6 border-t border-neutral-800 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
+              <div className="pt-4 sm:pt-6 border-t border-neutral-200 dark:border-neutral-800 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm bg-neutral-50 dark:bg-neutral-900 p-4 rounded-lg font-sans">
                 {movie.budget && movie.budget > 0 && (
                   <div>
-                    <span className="text-neutral-400">Budget: </span>
-                    <span className="text-white">
+                    <span className="text-neutral-700 dark:text-neutral-300">Budget: </span>
+                    <span className="text-neutral-900 dark:text-white font-medium">
                       ${movie.budget.toLocaleString()}
                     </span>
                   </div>
                 )}
                 {movie.revenue && movie.revenue > 0 && (
                   <div>
-                    <span className="text-neutral-400">Revenue: </span>
-                    <span className="text-white">
+                    <span className="text-neutral-700 dark:text-neutral-300">Revenue: </span>
+                    <span className="text-neutral-900 dark:text-white font-medium">
                       ${movie.revenue.toLocaleString()}
                     </span>
                   </div>
@@ -538,8 +538,8 @@ export default function MovieDetails({
                 {movie.productionCompanies &&
                   movie.productionCompanies.length > 0 && (
                     <div>
-                      <span className="text-neutral-400">Production: </span>
-                      <span className="text-white">
+                      <span className="text-neutral-700 dark:text-neutral-300">Production: </span>
+                      <span className="text-neutral-900 dark:text-white font-medium">
                         {movie.productionCompanies
                           .map((pc) => pc.name)
                           .join(', ')}
@@ -549,8 +549,8 @@ export default function MovieDetails({
                 {movie.productionCountries &&
                   movie.productionCountries.length > 0 && (
                     <div>
-                      <span className="text-neutral-400">Countries: </span>
-                      <span className="text-white">
+                      <span className="text-neutral-700 dark:text-neutral-300">Countries: </span>
+                      <span className="text-neutral-900 dark:text-white font-medium">
                         {movie.productionCountries
                           .map((pc) => pc.name)
                           .join(', ')}

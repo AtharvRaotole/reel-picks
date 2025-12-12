@@ -141,7 +141,7 @@ export default function Modal({
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
+        className="absolute inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm transition-opacity duration-300"
         aria-hidden="true"
       />
 
@@ -151,7 +151,7 @@ export default function Modal({
         tabIndex={-1}
         role="document"
         className={clsx(
-          'relative z-10 w-full rounded-lg sm:rounded-xl bg-neutral-900 border border-neutral-800 shadow-2xl',
+          'relative z-10 w-full rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-2xl',
           'transform transition-all duration-300',
           'max-h-[95vh] sm:max-h-[90vh] overflow-y-auto',
           'mx-2 sm:mx-0',
@@ -163,11 +163,11 @@ export default function Modal({
       >
         {/* Header */}
         {(title || showCloseButton) && (
-          <div className="flex items-center justify-between border-b border-neutral-800 px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 px-4 sm:px-6 py-3 sm:py-4 bg-neutral-50 dark:bg-neutral-900">
             {title && (
               <h2
                 id="modal-title"
-                className="text-lg sm:text-xl font-bold text-white pr-2"
+                className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-white pr-2"
               >
                 {title}
               </h2>

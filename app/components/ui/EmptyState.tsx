@@ -1,10 +1,12 @@
-import { HTMLAttributes, forwardRef } from 'react';
+'use client';
+
+import { HTMLAttributes, ReactNode } from 'react';
 import { clsx } from 'clsx';
-import { Film, Search, Heart, AlertCircle } from 'lucide-react';
+import { Search, Film, AlertCircle, Heart, Info } from 'lucide-react';
 import Button from './Button';
 
 export interface EmptyStateProps extends HTMLAttributes<HTMLDivElement> {
-  icon?: 'film' | 'search' | 'heart' | 'alert' | React.ReactNode;
+  icon?: ReactNode | 'search' | 'film' | 'alert' | 'heart' | 'info';
   title: string;
   description?: string;
   actionLabel?: string;
@@ -13,82 +15,74 @@ export interface EmptyStateProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const iconMap = {
-  film: Film,
   search: Search,
-  heart: Heart,
+  film: Film,
   alert: AlertCircle,
+  heart: Heart,
+  info: Info,
 } as const;
 
-type IconKey = keyof typeof iconMap;
+export default function EmptyState({
+  icon,
+  title,
+  description,
+  actionLabel,
+  onAction,
+  variant = 'default',
+  className,
+  ...props
+}: EmptyStateProps) {
+  const renderIcon = () => {
+    if (!icon) return null;
 
-const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
-  (
-    {
-      className,
-      icon = 'film',
-      title,
-      description,
-      actionLabel,
-      onAction,
-      variant = 'default',
-      ...props
-    },
-    ref
-  ) => {
-    const renderIcon = () => {
-      if (typeof icon === 'string' && icon in iconMap) {
-        const IconComponent = iconMap[icon as IconKey];
-        return <IconComponent className="h-12 w-12" />;
-      }
-      if (icon && typeof icon !== 'string') {
-        return icon;
-      }
-      return null;
-    };
+    if (typeof icon === 'string' && icon in iconMap) {
+      const IconComponent = iconMap[icon as keyof typeof iconMap];
+      return <IconComponent className="h-12 w-12 text-neutral-400" />;
+    }
 
-    const iconElement = renderIcon();
+    if (typeof icon === 'object' && 'type' in icon) {
+      return icon;
+    }
 
-    return (
-      <div
-        ref={ref}
-        className={clsx(
-          'flex flex-col items-center justify-center text-center py-12 px-4',
-          variant === 'default' && 'rounded-xl bg-neutral-900 border border-neutral-800',
-          className
-        )}
-        {...props}
-      >
-        {iconElement && (
-          <div
-            className={clsx(
-              'mb-4 rounded-full p-4',
-              variant === 'default'
-                ? 'bg-neutral-800 text-neutral-500'
-                : 'text-neutral-600'
-            )}
-            aria-hidden="true"
-          >
-            {iconElement}
-          </div>
-        )}
+    return null;
+  };
 
-        <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
+  const iconElement = renderIcon();
 
-        {description && (
-          <p className="text-neutral-300 max-w-md mb-6">{description}</p>
-        )}
+  return (
+    <div
+      className={clsx(
+        'flex flex-col items-center justify-center text-center py-12 px-4',
+        variant === 'default' && 'rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800',
+        className
+      )}
+      {...props}
+    >
+      {iconElement && (
+        <div
+          className={clsx(
+            'mb-4 rounded-full p-3',
+            variant === 'default'
+              ? 'bg-white dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500'
+              : 'text-neutral-400 dark:text-neutral-500'
+          )}
+          aria-hidden="true"
+        >
+          {iconElement}
+        </div>
+      )}
 
-        {actionLabel && onAction && (
-          <Button variant="primary" onClick={onAction}>
-            {actionLabel}
-          </Button>
-        )}
-      </div>
-    );
-  }
-);
+      <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-2">{title}</h3>
 
-EmptyState.displayName = 'EmptyState';
+      {description && (
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 max-w-md mb-6">{description}</p>
+      )}
 
-export default EmptyState;
-
+      {actionLabel && onAction && (
+        <Button variant="primary" onClick={onAction} size="sm">
+          {actionLabel}
+        </Button>
+      )}
+    </div>
+  );
+}

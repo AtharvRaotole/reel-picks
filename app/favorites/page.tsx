@@ -67,7 +67,7 @@ function InlineStarRating({
           onClick={() => onChange(rating)}
           onMouseEnter={() => setHoveredRating(rating)}
           onMouseLeave={() => setHoveredRating(null)}
-          className="transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-neutral-900 rounded-sm p-0.5"
+          className="transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-sm p-0.5 min-h-[44px] min-w-[44px] flex items-center justify-center"
           aria-label={`Rate ${rating} out of 5`}
           aria-pressed={value === rating}
         >
@@ -76,10 +76,11 @@ function InlineStarRating({
               starSize,
               'transition-all duration-200',
               rating <= (hoveredRating ?? value)
-                ? 'fill-primary-500 text-primary-500'
-                : 'fill-none text-neutral-600',
+                ? 'fill-accent-500 text-accent-500'
+                : 'fill-none text-neutral-300',
               'hover:scale-110'
             )}
+            aria-hidden="true"
           />
         </button>
       ))}
@@ -108,7 +109,7 @@ function FavoriteCard({
       hover
       interactive
       onClick={onClick}
-      className="group overflow-hidden h-full flex flex-col bg-gradient-to-br from-neutral-900 to-neutral-800 border-neutral-700 hover:border-primary-500/50 transition-all duration-300"
+      className="group overflow-hidden h-full flex flex-col border-neutral-200 hover:border-neutral-300 transition-all duration-300"
       aria-label={`View details for ${movie.title}. Your rating: ${rating} out of 5 stars${notes ? `. Notes: ${truncateText(notes, 50)}` : ''}`}
     >
       {/* Poster Image */}
@@ -125,28 +126,28 @@ function FavoriteCard({
 
         {/* Heart Badge Overlay */}
         <div className="absolute top-2 left-2 z-10">
-          <div className="bg-primary-500/90 backdrop-blur-sm rounded-full p-1.5">
+          <div className="bg-accent-500/90 backdrop-blur-sm rounded-full p-1.5 shadow-sm">
             <Heart className="h-4 w-4 fill-white text-white" />
           </div>
         </div>
       </div>
 
       {/* Movie Info */}
-      <div className="p-3 sm:p-4 flex-1 flex flex-col space-y-2 sm:space-y-3">
+      <div className="p-4 flex-1 flex flex-col space-y-3">
         {/* Title */}
-        <h3 className="text-base sm:text-lg font-semibold text-white line-clamp-2 group-hover:text-primary-400 transition-colors leading-tight">
+        <h3 className="text-base sm:text-lg font-semibold text-neutral-900 line-clamp-2 group-hover:text-accent-600 transition-colors leading-tight">
           {movie.title}
         </h3>
 
         {/* Date Added */}
-        <div className="flex items-center gap-1.5 text-xs text-neutral-300">
+        <div className="flex items-center gap-1.5 text-xs text-neutral-500">
           <Calendar className="h-3 w-3 flex-shrink-0" aria-hidden="true" />
           <span className="truncate">Added {formatDate(dateAdded)}</span>
         </div>
 
         {/* Rating */}
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-neutral-300">
+          <label className="text-xs font-medium text-neutral-600">
             Your Rating
           </label>
           <div
@@ -158,15 +159,15 @@ function FavoriteCard({
               onChange={(newRating) => onRatingChange(movie.id, newRating)}
               size="sm"
             />
-            <span className="text-xs text-neutral-400 whitespace-nowrap">({rating}/5)</span>
+            <span className="text-xs text-neutral-500 whitespace-nowrap">({rating}/5)</span>
           </div>
         </div>
 
         {/* Notes Preview */}
         {notes && (
-          <div className="pt-2 border-t border-neutral-700">
-            <p className="text-xs font-medium text-neutral-300 mb-1">Notes</p>
-            <p className="text-xs sm:text-sm text-neutral-300 line-clamp-2 italic leading-relaxed">
+          <div className="pt-2 border-t border-neutral-200 dark:border-neutral-800">
+            <p className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1">Notes</p>
+            <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 italic leading-relaxed">
               &ldquo;{truncateText(notes, 80)}&rdquo;
             </p>
           </div>
@@ -307,13 +308,12 @@ export default function FavoritesPage() {
       {/* Header */}
       <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center gap-2 sm:gap-3">
-            <Heart className="h-6 w-6 sm:h-8 sm:w-8 text-primary-500 fill-primary-500" />
+          <h1 className="text-4xl sm:text-5xl font-bold text-neutral-900 dark:text-white mb-3 tracking-tight" style={{ fontFamily: 'var(--font-playfair), serif' }}>
             My Favorites
           </h1>
-          <p className="text-sm sm:text-base text-neutral-300">
+          <p className="text-lg sm:text-xl text-neutral-600 dark:text-neutral-400 font-light">
             Your personal collection of{' '}
-            <span className="text-primary-400 font-semibold">
+            <span className="text-neutral-900 dark:text-white font-semibold">
               {favoritesCount}
             </span>{' '}
             {favoritesCount === 1 ? 'movie' : 'movies'}

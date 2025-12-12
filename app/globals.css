@@ -1,31 +1,27 @@
 @import "tailwindcss";
 
 :root {
-  /* Dark theme by default */
-  --background: #0a0a0a;
-  --foreground: #ffffff;
+  /* Light theme - minimalistic and professional */
+  --background: #ffffff;
+  --foreground: #0a0a0a;
   
-  /* Primary colors */
-  --primary-50: #fee2e2;
-  --primary-100: #fecaca;
-  --primary-200: #fca5a5;
-  --primary-300: #f87171;
-  --primary-400: #ef4444;
-  --primary-500: #dc2626;
-  --primary-600: #b91c1c;
-  --primary-700: #991b1b;
-  --primary-800: #7f1d1d;
+  /* Primary colors - subtle and professional */
+  --primary-50: #fef2f2;
+  --primary-100: #fee2e2;
+  --primary-200: #fecaca;
+  --primary-300: #fca5a5;
+  --primary-400: #f87171;
+  --primary-500: #ef4444;
+  --primary-600: #dc2626;
+  --primary-700: #b91c1c;
+  --primary-800: #991b1b;
   --primary-900: #7f1d1d;
   
-  /* Secondary colors */
-  --secondary-500: #1db954;
-  --secondary-600: #1a8f47;
+  /* Accent colors - natural and subtle */
+  --accent-500: #6366f1;
+  --accent-600: #4f46e5;
   
-  /* Accent colors */
-  --accent-500: #a855f7;
-  --accent-600: #9333ea;
-  
-  /* Neutral colors */
+  /* Neutral colors - clean and minimal */
   --neutral-50: #fafafa;
   --neutral-100: #f5f5f5;
   --neutral-200: #e5e5e5;
@@ -37,13 +33,17 @@
   --neutral-800: #262626;
   --neutral-900: #171717;
   --neutral-950: #0a0a0a;
+  
+  /* Success and Error */
+  --success-500: #22c55e;
+  --error-500: #ef4444;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-playfair);
   
   /* Primary color scale */
   --color-primary-50: var(--primary-50);
@@ -56,10 +56,6 @@
   --color-primary-700: var(--primary-700);
   --color-primary-800: var(--primary-800);
   --color-primary-900: var(--primary-900);
-  
-  /* Secondary colors */
-  --color-secondary-500: var(--secondary-500);
-  --color-secondary-600: var(--secondary-600);
   
   /* Accent colors */
   --color-accent-500: var(--accent-500);
@@ -82,7 +78,81 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Dark mode styles */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+}
+
+.dark body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Dark mode component overrides for better contrast - only apply in dark mode */
+.dark .bg-white {
+  background-color: #1a1a1a !important;
+}
+
+.dark .bg-neutral-50 {
+  background-color: #1a1a1a !important;
+}
+
+.dark .bg-neutral-100 {
+  background-color: #262626 !important;
+}
+
+.dark .bg-neutral-200 {
+  background-color: #404040 !important;
+}
+
+/* Only override text colors in dark mode, not in light mode */
+.dark .text-neutral-900 {
+  color: #ffffff !important;
+}
+
+.dark .text-neutral-800 {
+  color: #e5e5e5 !important;
+}
+
+.dark .text-neutral-700 {
+  color: #d4d4d4 !important;
+}
+
+.dark .text-neutral-600 {
+  color: #a3a3a3 !important;
+}
+
+.dark .text-neutral-500 {
+  color: #737373 !important;
+}
+
+.dark .text-neutral-400 {
+  color: #a3a3a3 !important;
+}
+
+.dark .border-neutral-200 {
+  border-color: #404040 !important;
+}
+
+.dark .border-neutral-300 {
+  border-color: #525252 !important;
+}
+
+.dark .hover\:bg-neutral-100:hover {
+  background-color: #262626 !important;
+}
+
+.dark .hover\:text-neutral-900:hover {
+  color: #ffffff !important;
 }
 
 /* Smooth transitions for interactive elements */
@@ -90,6 +160,25 @@ body {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 200ms;
+}
+
+/* Enhanced focus styles for all interactive elements */
+:focus-visible {
+  outline: 2px solid var(--accent-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Focus styles for buttons */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent-500);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 /* Screen reader only class */
@@ -117,32 +206,6 @@ body {
   white-space: normal;
 }
 
-/* Enhanced focus styles for all interactive elements */
-:focus-visible {
-  outline: 3px solid var(--accent-500);
-  outline-offset: 3px;
-  border-radius: 4px;
-}
-
-/* Focus styles for buttons */
-button:focus-visible,
-a:focus-visible,
-[role="button"]:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: 3px solid var(--accent-500);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
-}
-
-/* Focus styles for cards and interactive elements */
-[tabindex]:focus-visible,
-[role="link"]:focus-visible {
-  outline: 3px solid var(--accent-500);
-  outline-offset: 3px;
-}
-
 /* Touch optimization for mobile */
 button,
 a,
@@ -153,17 +216,16 @@ input[type="submit"] {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Improve text readability on mobile */
-@media (max-width: 640px) {
-  body {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  /* Ensure minimum readable font sizes */
-  p, span, div {
-    font-size: clamp(0.875rem, 2.5vw, 1rem);
-  }
+/* Professional typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+p {
+  line-height: 1.6;
+  letter-spacing: -0.01em;
 }
 
 /* Heart beat animation */
@@ -202,31 +264,6 @@ input[type="submit"] {
   animation: fadeIn 0.4s ease-out;
 }
 
-/* Animated background gradient */
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-.animated-gradient {
-  background: linear-gradient(
-    -45deg,
-    #0a0a0a,
-    #171717,
-    #1a1a1a,
-    #0f0f0f
-  );
-  background-size: 400% 400%;
-  animation: gradientShift 15s ease infinite;
-}
-
 /* Parallax effect for movie posters */
 @media (prefers-reduced-motion: no-preference) {
   .parallax-poster {
@@ -241,40 +278,16 @@ input[type="submit"] {
 }
 
 /* Color contrast improvements for WCAG AA compliance */
-/* Ensure text meets minimum 4.5:1 contrast ratio for normal text */
-/* Ensure text meets minimum 3:1 contrast ratio for large text (18pt+) */
-
-/* Neutral text colors - verified for contrast */
-.text-neutral-300 {
-  color: #d4d4d4; /* 4.5:1 contrast on #0a0a0a */
+.text-neutral-600 {
+  color: #525252; /* 7:1 contrast on white */
 }
 
-.text-neutral-400 {
-  color: #a3a3a3; /* 3.5:1 contrast on #0a0a0a - acceptable for large text */
-}
-
-.text-neutral-500 {
-  color: #737373; /* 2.8:1 contrast - use only for non-essential text */
-}
-
-/* Ensure interactive elements have sufficient contrast */
-button:not(:disabled),
-a:not([aria-disabled="true"]) {
-  color: #ffffff; /* 21:1 contrast on dark backgrounds */
+.text-neutral-700 {
+  color: #404040; /* 12:1 contrast on white */
 }
 
 /* Focus indicators with high contrast */
 :focus-visible {
-  outline-color: #a855f7; /* Accent-500 - high contrast */
-  outline-width: 3px;
-}
-
-/* Error states with sufficient contrast */
-.text-error-500 {
-  color: #ef4444; /* High contrast for errors */
-}
-
-/* Success states */
-.text-success-400 {
-  color: #4ade80; /* High contrast for success messages */
+  outline-color: #6366f1; /* Accent-500 - high contrast */
+  outline-width: 2px;
 }
