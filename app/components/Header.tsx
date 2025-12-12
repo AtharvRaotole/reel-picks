@@ -1,14 +1,20 @@
 'use client';
 
-import { Heart, Volume2, VolumeX, Sun, Moon } from 'lucide-react';
+import { Heart, Volume2, VolumeX, Sun, Moon, HelpCircle, Bell } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSoundEffects } from '@/app/components/SoundEffects';
 import { useTheme } from '@/app/components/ThemeProvider';
+import { useReminders } from '@/app/lib/hooks/useReminders';
+import KeyboardShortcutsOverlay from '@/app/components/KeyboardShortcutsOverlay';
 
 export default function Header() {
   const [favoritesCount, setFavoritesCount] = useState(0);
+  const [showShortcutsOverlay, setShowShortcutsOverlay] = useState(false);
   const { enabled: soundEnabled, toggle: toggleSound } = useSoundEffects();
+  const { getUpcomingReminders } = useReminders();
+  const upcomingReminders = getUpcomingReminders();
+  const remindersCount = upcomingReminders.length;
   
   // Theme hook with error handling for SSR
   let theme: 'light' | 'dark' = 'light';
@@ -95,6 +101,22 @@ export default function Header() {
               )}
             </Link>
 
+            {/* Reminders Bell */}
+            {remindersCount > 0 && (
+              <div className="relative flex items-center justify-center rounded-lg p-2 text-neutral-600 dark:text-neutral-400 transition-all hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-neutral-900 dark:hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-950 min-h-[44px] min-w-[44px] touch-manipulation"
+                aria-label={`${remindersCount} upcoming reminder${remindersCount === 1 ? '' : 's'}`}
+                title={`${remindersCount} upcoming reminder${remindersCount === 1 ? '' : 's'}`}
+              >
+                <Bell className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+                <span 
+                  className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-500 dark:bg-accent-600 px-1.5 text-xs font-semibold text-white shadow-sm"
+                  aria-hidden="true"
+                >
+                  {remindersCount > 99 ? '99+' : remindersCount}
+                </span>
+              </div>
+            )}
+
             {/* Divider */}
             <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-800 mx-1" aria-hidden="true" />
 
@@ -126,9 +148,25 @@ export default function Header() {
                 <VolumeX className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
               )}
             </button>
+
+            {/* Keyboard Shortcuts Help */}
+            <button
+              onClick={() => setShowShortcutsOverlay(true)}
+              className="flex items-center justify-center rounded-lg p-2 text-neutral-600 dark:text-neutral-400 transition-all hover:bg-neutral-100 dark:hover:bg-neutral-900 hover:text-neutral-900 dark:hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-neutral-950 min-h-[44px] min-w-[44px] touch-manipulation"
+              aria-label="Show keyboard shortcuts"
+              title="Keyboard shortcuts (?)"
+            >
+              <HelpCircle className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+            </button>
           </nav>
         </div>
       </div>
+
+      {/* Keyboard Shortcuts Overlay */}
+      <KeyboardShortcutsOverlay
+        isOpen={showShortcutsOverlay}
+        onClose={() => setShowShortcutsOverlay(false)}
+      />
     </header>
   );
 }

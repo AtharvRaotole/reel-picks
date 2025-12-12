@@ -7,6 +7,7 @@ import SkipToContent from "./components/SkipToContent";
 import { ToastProvider } from "./components/ui/ToastProvider";
 import { SoundEffectsProvider } from "./components/SoundEffects";
 import { ThemeProvider } from "./components/ThemeProvider";
+import KeyboardShortcutsProvider from "./components/KeyboardShortcutsProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -41,16 +42,18 @@ export default function RootLayout({
         <ThemeProvider>
           <SoundEffectsProvider>
             <ToastProvider>
-              <ErrorBoundary>
-                <Header />
-              </ErrorBoundary>
-              <ErrorBoundary>
-                <main id="main-content" className="min-h-screen page-transition" tabIndex={-1}>
-                  <div className="mx-auto max-w-7xl px-4 sm:px-5 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
-                    {children}
-                  </div>
-                </main>
-              </ErrorBoundary>
+              <KeyboardShortcutsProvider>
+                <ErrorBoundary>
+                  <Header />
+                </ErrorBoundary>
+                <ErrorBoundary>
+                  <main id="main-content" className="min-h-screen page-transition" tabIndex={-1}>
+                    <div className="mx-auto max-w-7xl px-4 sm:px-5 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+                      {children}
+                    </div>
+                  </main>
+                </ErrorBoundary>
+              </KeyboardShortcutsProvider>
             </ToastProvider>
           </SoundEffectsProvider>
         </ThemeProvider>

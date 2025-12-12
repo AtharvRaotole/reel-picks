@@ -2,14 +2,16 @@
 
 import { useState } from 'react';
 import { useFavorites, StoredFavorite } from '@/app/lib/hooks/useFavorites';
+import { useReminders, formatTimeRemaining } from '@/app/lib/hooks/useReminders';
 import { useToast } from '@/app/components/ui/ToastProvider';
 import MovieDetails from '@/app/components/MovieDetails';
 import Modal from '@/app/components/ui/Modal';
 import Button from '@/app/components/ui/Button';
 import Card from '@/app/components/ui/Card';
+import Badge from '@/app/components/ui/Badge';
 import EmptyState from '@/app/components/ui/EmptyState';
 import MovieCardSkeleton from '@/app/components/MovieCardSkeleton';
-import { Heart, Star, Trash2, Calendar } from 'lucide-react';
+import { Heart, Star, Trash2, Calendar, Clock } from 'lucide-react';
 import MoviePoster from '@/app/components/MoviePoster';
 import { clsx } from 'clsx';
 
@@ -102,7 +104,10 @@ function FavoriteCard({
   onRatingChange,
   onClick,
 }: FavoriteCardProps) {
+  const { getReminder } = useReminders();
   const { movie, rating, notes, dateAdded } = favorite;
+  const reminder = getReminder(movie.id);
+  const hasUpcomingReminder = reminder && reminder.reminderTime > Date.now();
 
   return (
     <Card
@@ -130,6 +135,20 @@ function FavoriteCard({
             <Heart className="h-4 w-4 fill-white text-white" />
           </div>
         </div>
+
+        {/* Reminder Badge Overlay */}
+        {hasUpcomingReminder && (
+          <div className="absolute top-2 right-2 z-10">
+            <Badge 
+              variant="secondary" 
+              size="sm" 
+              className="bg-accent-500/90 backdrop-blur-sm text-white border-0"
+            >
+              <Clock className="h-3 w-3 mr-1" />
+              {formatTimeRemaining(reminder.reminderTime)}
+            </Badge>
+          </div>
+        )}
       </div>
 
       {/* Movie Info */}
@@ -240,6 +259,8 @@ export default function FavoritesPage() {
     clearAllFavorites,
     favoritesCount,
   } = useFavorites();
+  const { getUpcomingReminders } = useReminders();
+  const upcomingReminders = getUpcomingReminders();
   const { showSuccess, showError } = useToast();
 
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
@@ -332,6 +353,50 @@ export default function FavoritesPage() {
           </Button>
         )}
       </div>
+
+      {/* Upcoming Reminders Section */}
+      {upcomingReminders.length > 0 && (
+        <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800 rounded-lg">
+          <div className="flex items-center gap-2 mb-3">
+            <Calendar className="h-5 w-5 text-accent-600 dark:text-accent-400" />
+            <h2 className="text-lg sm:text-xl font-semibold text-neutral-900 dark:text-white font-sans">
+              📅 Scheduled to watch: {upcomingReminders.length} {upcomingReminders.length === 1 ? 'movie' : 'movies'}
+            </h2>
+          </div>
+          <div className="space-y-2">
+            {upcomingReminders.slice(0, 3).map((reminder) => {
+              const favorite = favorites.find((fav) => String(fav.movie.id) === String(reminder.movieId));
+              if (!favorite) return null;
+              
+              return (
+                <div 
+                  key={reminder.movieId}
+                  className="flex items-center justify-between p-3 bg-white dark:bg-neutral-900 rounded-lg border border-accent-200 dark:border-accent-800"
+                >
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="flex-shrink-0">
+                      <Clock className="h-4 w-4 text-accent-600 dark:text-accent-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm sm:text-base font-medium text-neutral-900 dark:text-white truncate font-sans">
+                        {reminder.movieTitle}
+                      </p>
+                      <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 font-sans">
+                        {formatTimeRemaining(reminder.reminderTime)} remaining
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            {upcomingReminders.length > 3 && (
+              <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 font-sans pt-2">
+                +{upcomingReminders.length - 3} more reminder{upcomingReminders.length - 3 === 1 ? '' : 's'}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Empty State */}
       {favoritesCount === 0 && (

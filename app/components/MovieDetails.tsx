@@ -5,12 +5,13 @@ import { getMovieDetails, ApiError } from '@/app/lib/api-client';
 import { MovieDetails as MovieDetailsType } from '@/app/types/movie';
 import { useFavorites } from '@/app/lib/hooks/useFavorites';
 import { useConfetti } from '@/app/lib/hooks/useConfetti';
+import { useReminders, ReminderOption } from '@/app/lib/hooks/useReminders';
 import { useToast } from '@/app/components/ui/ToastProvider';
 import { useSoundEffects } from '@/app/components/SoundEffects';
 import Modal from '@/app/components/ui/Modal';
 import Button from '@/app/components/ui/Button';
 import Badge from '@/app/components/ui/Badge';
-import { Star, Heart, Calendar, Clock, X } from 'lucide-react';
+import { Star, Heart, Calendar, Clock, X, Bell, BellOff } from 'lucide-react';
 import MoviePoster from '@/app/components/MoviePoster';
 import { clsx } from 'clsx';
 
@@ -163,6 +164,9 @@ export default function MovieDetails({
   const [notes, setNotes] = useState<string>('');
   const [rating, setRating] = useState<number>(1);
   const [heartBeat, setHeartBeat] = useState(false);
+  const [reminderOption, setReminderOption] = useState<ReminderOption | ''>('');
+  const [customReminderDate, setCustomReminderDate] = useState<string>('');
+  const [customReminderTime, setCustomReminderTime] = useState<string>('');
 
   const {
     isFavorite,
@@ -172,6 +176,12 @@ export default function MovieDetails({
     updateFavorite,
     favoritesCount,
   } = useFavorites();
+  const {
+    addReminder,
+    removeReminder,
+    getReminder,
+    hasReminder,
+  } = useReminders();
   const { showSuccess, showError } = useToast();
   const { play: playSound } = useSoundEffects();
   const triggerFirstFavoriteConfetti = useConfetti();
@@ -197,6 +207,16 @@ export default function MovieDetails({
             setRating(1);
             setNotes('');
           }
+
+          // Load reminder data if movie has a reminder
+          const reminder = getReminder(movieId);
+          if (reminder) {
+            setReminderOption('custom'); // Show as custom since we have an existing reminder
+          } else {
+            setReminderOption('');
+            setCustomReminderDate('');
+            setCustomReminderTime('');
+          }
         })
         .catch((err) => {
           const apiError =
@@ -216,8 +236,11 @@ export default function MovieDetails({
       setLoading(false);
       setNotes('');
       setRating(1);
+      setReminderOption('');
+      setCustomReminderDate('');
+      setCustomReminderTime('');
     }
-  }, [isOpen, movieId, getFavorite]);
+  }, [isOpen, movieId, getFavorite, getReminder]);
 
   const favorited = movieId ? isFavorite(movieId) : false;
   const year = movie ? getYear(movie.releaseDate) : null;
@@ -309,6 +332,53 @@ export default function MovieDetails({
       } finally {
         setTimeout(() => setIsNotesUpdating(false), 200);
       }
+    }
+  };
+
+  const handleReminderChange = (option: ReminderOption | '') => {
+    if (!movie || !movieId) return;
+
+    setReminderOption(option);
+
+    if (option === '') {
+      // Remove reminder
+      removeReminder(movieId);
+      showSuccess('Reminder removed');
+    } else if (option === 'custom') {
+      // Custom option selected, but wait for date/time input
+      // Don't add reminder yet
+    } else {
+      // Add reminder with selected option
+      const success = addReminder(movieId, movie.title, option);
+      if (success) {
+        showSuccess('Reminder set!');
+      } else {
+        showError('Failed to set reminder. Please try again.');
+      }
+    }
+  };
+
+  const handleCustomReminderSubmit = () => {
+    if (!movie || !movieId || !customReminderDate || !customReminderTime) {
+      showError('Please select both date and time');
+      return;
+    }
+
+    try {
+      const dateTime = new Date(`${customReminderDate}T${customReminderTime}`);
+      if (dateTime.getTime() <= Date.now()) {
+        showError('Please select a future date and time');
+        return;
+      }
+
+      const success = addReminder(movieId, movie.title, 'custom', dateTime);
+      if (success) {
+        showSuccess('Custom reminder set!');
+      } else {
+        showError('Failed to set reminder. Please try again.');
+      }
+    } catch (error) {
+      showError('Invalid date or time. Please try again.');
     }
   };
 
@@ -444,6 +514,71 @@ export default function MovieDetails({
                         {favorited ? 'Remove from Favorites' : 'Add to Favorites'}
                       </span>
                     </Button>
+                  </div>
+
+                  {/* Reminder Dropdown */}
+                  <div className="space-y-2">
+                    <label 
+                      htmlFor="reminder-select"
+                      className="block text-sm sm:text-base font-medium text-neutral-900 dark:text-white font-sans"
+                    >
+                      ⏰ Watch later
+                    </label>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <select
+                        id="reminder-select"
+                        value={reminderOption}
+                        onChange={(e) => handleReminderChange(e.target.value as ReminderOption | '')}
+                        className="flex-1 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 sm:px-4 py-2.5 text-sm sm:text-base text-neutral-900 dark:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:border-accent-500 transition-all duration-200 min-h-[44px] touch-manipulation font-sans"
+                        aria-label="Select reminder time"
+                      >
+                        <option value="">No reminder</option>
+                        <option value="1hour">1 hour</option>
+                        <option value="tonight">Tonight (8 PM)</option>
+                        <option value="tomorrow">Tomorrow</option>
+                        <option value="weekend">This weekend</option>
+                        <option value="custom">Custom</option>
+                      </select>
+                      {movieId && hasReminder(movieId) && (
+                        <Button
+                          variant="ghost"
+                          onClick={() => handleReminderChange('')}
+                          className="flex items-center gap-2 min-h-[44px] touch-manipulation"
+                          size="md"
+                          aria-label="Remove reminder"
+                        >
+                          <BellOff className="h-4 w-4" />
+                          <span className="hidden sm:inline">Remove</span>
+                        </Button>
+                      )}
+                    </div>
+                    {reminderOption === 'custom' && (
+                      <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                        <input
+                          type="date"
+                          value={customReminderDate}
+                          onChange={(e) => setCustomReminderDate(e.target.value)}
+                          min={new Date().toISOString().split('T')[0]}
+                          className="flex-1 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 sm:px-4 py-2.5 text-sm sm:text-base text-neutral-900 dark:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:border-accent-500 transition-all duration-200 min-h-[44px] touch-manipulation font-sans"
+                          placeholder="Date"
+                        />
+                        <input
+                          type="time"
+                          value={customReminderTime}
+                          onChange={(e) => setCustomReminderTime(e.target.value)}
+                          className="flex-1 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 sm:px-4 py-2.5 text-sm sm:text-base text-neutral-900 dark:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:border-accent-500 transition-all duration-200 min-h-[44px] touch-manipulation font-sans"
+                          placeholder="Time"
+                        />
+                        <Button
+                          variant="primary"
+                          onClick={handleCustomReminderSubmit}
+                          className="min-h-[44px] touch-manipulation"
+                          size="md"
+                        >
+                          Set
+                        </Button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Rating and Notes (shown when favorited) */}

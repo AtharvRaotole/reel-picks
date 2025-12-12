@@ -3,11 +3,12 @@
 import { useState } from 'react';
 import { useMovieSearch } from '@/app/lib/hooks/useMovieSearch';
 import { Movie } from '@/app/types/movie';
-import { Input, Card, Badge, EmptyState } from '@/app/components/ui';
+import { Input, EmptyState } from '@/app/components/ui';
 import MovieCardSkeleton from '@/app/components/MovieCardSkeleton';
-import MoviePoster from '@/app/components/MoviePoster';
+import MovieCard from '@/app/components/MovieCard';
 import MovieDetails from '@/app/components/MovieDetails';
 import { AlertCircle } from 'lucide-react';
+import { clsx } from 'clsx';
 
 /**
  * Extracts the year from a release date string.
@@ -47,63 +48,6 @@ interface MovieCardProps {
   onClick: () => void;
 }
 
-function MovieCard({ movie, priority = false, onClick }: MovieCardProps) {
-  const year = getYear(movie.releaseDate);
-  const rating = movie.voteAverage ? movie.voteAverage.toFixed(1) : 'N/A';
-
-  return (
-    <Card
-      hover
-      interactive
-      onClick={onClick}
-      className="group overflow-hidden h-full flex flex-col cursor-pointer"
-      aria-label={`View details for ${movie.title}${year ? ` (${year})` : ''}`}
-    >
-        {/* Poster Image */}
-        <div className="relative">
-          <MoviePoster
-            posterPath={movie.posterPath}
-            title={movie.title}
-            size="small"
-            loading={priority ? 'eager' : 'lazy'}
-            priority={priority}
-            hover={true}
-            className="group"
-          />
-          
-          {/* Rating Badge Overlay */}
-          {movie.voteAverage && movie.voteAverage > 0 && (
-            <div className="absolute top-2 right-2 z-10">
-              <Badge variant="primary" size="sm" showIcon>
-                {rating}
-              </Badge>
-            </div>
-          )}
-        </div>
-
-        {/* Movie Info */}
-        <div className="p-4 flex-1 flex flex-col">
-          <h3 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white mb-2 line-clamp-2 group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors leading-tight font-sans">
-            {movie.title}
-          </h3>
-          
-          <div className="flex items-center gap-2 mb-2 text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 font-sans">
-            {year && <span>{year}</span>}
-            {year && movie.voteCount && movie.voteCount > 0 && <span aria-hidden="true">•</span>}
-            {movie.voteCount && movie.voteCount > 0 && (
-              <span>{movie.voteCount.toLocaleString()} votes</span>
-            )}
-          </div>
-
-          {movie.overview && (
-            <p className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 line-clamp-3 flex-1 leading-relaxed font-sans">
-              {truncateText(movie.overview, 120)}
-            </p>
-          )}
-        </div>
-      </Card>
-  );
-}
 
 /**
  * MovieSearch Component
@@ -199,7 +143,7 @@ export default function MovieSearch() {
       {!loading && !error && results && results.results.length > 0 && (
         <div>
           {/* Results Count */}
-            <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <p className="text-sm sm:text-base text-neutral-700 dark:text-neutral-300 font-sans">
               Found <span className="text-neutral-900 dark:text-white font-semibold">{results.totalResults.toLocaleString()}</span>{' '}
               {results.totalResults === 1 ? 'movie' : 'movies'}
@@ -218,6 +162,7 @@ export default function MovieSearch() {
                 key={movie.id} 
                 movie={movie}
                 priority={index < 4}
+                showHint={index === 0}
                 onClick={() => handleMovieClick(Number(movie.id))}
               />
             ))}
