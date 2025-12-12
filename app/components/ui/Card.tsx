@@ -20,8 +20,8 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       'rounded-lg transition-all duration-300 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800';
 
     const variants = {
-      default: 'bg-white/70 dark:bg-neutral-900/70 backdrop-blur-xl backdrop-saturate-150 border-white/30 dark:border-neutral-700/20',
-      elevated: 'bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl backdrop-saturate-150 border-white/40 dark:border-neutral-700/30 shadow-lg dark:shadow-xl dark:shadow-black/20',
+      default: 'bg-white/70 dark:bg-neutral-900/70 border-white/30 dark:border-neutral-700/20',
+      elevated: 'bg-white/80 dark:bg-neutral-900/80 border-white/40 dark:border-neutral-700/30 shadow-lg dark:shadow-xl dark:shadow-black/20',
       outlined: 'bg-transparent border-2 border-neutral-300/50 dark:border-neutral-700/50',
       glass: 'bg-white/5 dark:bg-neutral-900/5 backdrop-blur-2xl backdrop-saturate-150 border-white/10 dark:border-white/5 shadow-xl dark:shadow-2xl dark:shadow-black/30',
     };
@@ -43,14 +43,19 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
         }
       : undefined;
 
-    // Use glassmorphism base for default and elevated variants
+    // Use glassmorphism base for default, elevated, and glass variants
     const useGlassmorphism = variant === 'default' || variant === 'elevated' || variant === 'glass';
+    
+    // For glass variant, use stronger blur
+    const glassmorphismStyles = variant === 'glass' 
+      ? 'backdrop-blur-2xl backdrop-saturate-150'
+      : glassmorphismBase;
     
     return (
       <div
         ref={ref}
         className={clsx(
-          useGlassmorphism ? glassmorphismBase : baseStyles,
+          useGlassmorphism ? glassmorphismStyles : baseStyles,
           variants[variant],
           hoverStyles,
           interactiveStyles,

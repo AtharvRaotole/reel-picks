@@ -7,6 +7,7 @@ import { useSoundEffects } from '@/app/components/SoundEffects';
 import { useTheme } from '@/app/components/ThemeProvider';
 import { useReminders } from '@/app/lib/hooks/useReminders';
 import KeyboardShortcutsOverlay from '@/app/components/KeyboardShortcutsOverlay';
+import RecentlyViewed from '@/app/components/RecentlyViewed';
 
 export default function Header() {
   const [favoritesCount, setFavoritesCount] = useState(0);
@@ -100,6 +101,14 @@ export default function Header() {
                 </span>
               )}
             </Link>
+
+            {/* Recently Viewed */}
+            <RecentlyViewed 
+              onMovieClick={(movieId) => {
+                // Dispatch custom event that MovieSearch can listen to
+                window.dispatchEvent(new CustomEvent('openMovieDetails', { detail: { movieId } }));
+              }}
+            />
 
             {/* Reminders Bell */}
             {remindersCount > 0 && (

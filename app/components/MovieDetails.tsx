@@ -5,13 +5,14 @@ import { getMovieDetails, ApiError } from '@/app/lib/api-client';
 import { MovieDetails as MovieDetailsType } from '@/app/types/movie';
 import { useFavorites } from '@/app/lib/hooks/useFavorites';
 import { useConfetti } from '@/app/lib/hooks/useConfetti';
+import { useRecentlyViewed } from '@/app/lib/hooks/useRecentlyViewed';
 import { useReminders, ReminderOption } from '@/app/lib/hooks/useReminders';
 import { useToast } from '@/app/components/ui/ToastProvider';
 import { useSoundEffects } from '@/app/components/SoundEffects';
 import Modal from '@/app/components/ui/Modal';
 import Button from '@/app/components/ui/Button';
 import Badge from '@/app/components/ui/Badge';
-import { Star, Heart, Calendar, Clock, X, Bell, BellOff } from 'lucide-react';
+import { Star, Heart, Calendar, Clock, X, Bell, BellOff, Share2, Check } from 'lucide-react';
 import MoviePoster from '@/app/components/MoviePoster';
 import { clsx } from 'clsx';
 
@@ -100,26 +101,27 @@ function StarRating({ value, onChange, disabled = false }: StarRatingProps) {
  */
 function MovieDetailsSkeleton() {
   return (
-    <div className="animate-pulse">
+    <div>
       <div className="flex flex-col md:flex-row gap-6">
         {/* Poster Skeleton */}
         <div className="w-full md:w-64 flex-shrink-0">
-          <div className="aspect-[2/3] bg-neutral-200 dark:bg-neutral-800 rounded-lg" />
+          <div className="aspect-[2/3] bg-neutral-200 dark:bg-neutral-800 rounded-lg shimmer" />
         </div>
 
         {/* Content Skeleton */}
         <div className="flex-1 space-y-4">
-          <div className="h-8 bg-neutral-200 dark:bg-neutral-800 rounded w-3/4" />
-          <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-1/2" />
+          <div className="h-8 bg-neutral-200 dark:bg-neutral-800 rounded w-3/4 shimmer" />
+          <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-1/2 shimmer" />
           <div className="flex gap-2">
-            <div className="h-6 bg-neutral-200 dark:bg-neutral-800 rounded w-16" />
-            <div className="h-6 bg-neutral-200 dark:bg-neutral-800 rounded w-16" />
+            <div className="h-6 bg-neutral-200 dark:bg-neutral-800 rounded w-16 shimmer" />
+            <div className="h-6 bg-neutral-200 dark:bg-neutral-800 rounded w-16 shimmer" />
           </div>
           <div className="space-y-2">
-            <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded" />
-            <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-5/6" />
-            <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-4/6" />
+            <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded shimmer" />
+            <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-5/6 shimmer" />
+            <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-4/6 shimmer" />
           </div>
+          <div className="h-10 bg-neutral-200 dark:bg-neutral-800 rounded w-full shimmer" />
         </div>
       </div>
     </div>
@@ -164,6 +166,7 @@ export default function MovieDetails({
   const [notes, setNotes] = useState<string>('');
   const [rating, setRating] = useState<number>(1);
   const [heartBeat, setHeartBeat] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const [reminderOption, setReminderOption] = useState<ReminderOption | ''>('');
   const [customReminderDate, setCustomReminderDate] = useState<string>('');
   const [customReminderTime, setCustomReminderTime] = useState<string>('');
@@ -176,6 +179,7 @@ export default function MovieDetails({
     updateFavorite,
     favoritesCount,
   } = useFavorites();
+  const { addRecentlyViewed } = useRecentlyViewed();
   const {
     addReminder,
     removeReminder,
@@ -331,6 +335,41 @@ export default function MovieDetails({
         showError('Failed to save notes. Please try again.');
       } finally {
         setTimeout(() => setIsNotesUpdating(false), 200);
+      }
+    }
+  };
+
+  const handleShare = async () => {
+    if (!movie) return;
+
+    try {
+      // Generate shareable URL
+      const shareUrl = `${window.location.origin}/movies/${movie.id}`;
+      const shareText = `Check out ${movie.title} on Reel Picks!`;
+
+      // Try Web Share API first (mobile)
+      if (navigator.share) {
+        await navigator.share({
+          title: movie.title,
+          text: shareText,
+          url: shareUrl,
+        });
+        showSuccess('Shared successfully!');
+      } else {
+        // Fallback to clipboard
+        await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+        setShareCopied(true);
+        showSuccess('Link copied to clipboard!');
+        
+        // Reset after 2 seconds
+        setTimeout(() => {
+          setShareCopied(false);
+        }, 2000);
+      }
+    } catch (error) {
+      // User cancelled share or error occurred
+      if (error instanceof Error && error.name !== 'AbortError') {
+        showError('Failed to share. Please try again.');
       }
     }
   };
@@ -494,13 +533,13 @@ export default function MovieDetails({
 
                 {/* Favorite Actions */}
                 <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 space-y-4">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 flex-wrap">
                     <Button
                       variant={favorited ? 'secondary' : 'primary'}
                       onClick={handleToggleFavorite}
                       isLoading={isFavoriteLoading}
                       disabled={isFavoriteLoading}
-                      className="flex items-center gap-2 min-h-[44px] w-full sm:w-auto touch-manipulation"
+                      className="flex items-center gap-2 min-h-[44px] flex-1 sm:flex-initial touch-manipulation"
                       size="md"
                     >
                       <Heart
@@ -513,6 +552,27 @@ export default function MovieDetails({
                       <span className="text-sm sm:text-base">
                         {favorited ? 'Remove from Favorites' : 'Add to Favorites'}
                       </span>
+                    </Button>
+
+                    {/* Share Button */}
+                    <Button
+                      variant="secondary"
+                      onClick={handleShare}
+                      className="flex items-center gap-2 min-h-[44px] flex-1 sm:flex-initial touch-manipulation"
+                      size="md"
+                      aria-label="Share this movie"
+                    >
+                      {shareCopied ? (
+                        <>
+                          <Check className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+                          <span className="text-sm sm:text-base">Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Share2 className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+                          <span className="text-sm sm:text-base">Share</span>
+                        </>
+                      )}
                     </Button>
                   </div>
 

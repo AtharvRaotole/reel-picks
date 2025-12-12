@@ -316,3 +316,67 @@ p {
   outline-color: #6366f1; /* Accent-500 - high contrast */
   outline-width: 2px;
 }
+
+/* Reminder notification animations */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes reminder-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.95;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-reminder-pulse {
+  animation: reminder-pulse 2s ease-in-out;
+}
+
+/* Shimmer skeleton animation */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--neutral-200) 0%,
+    var(--neutral-100) 20%,
+    var(--neutral-200) 40%,
+    var(--neutral-200) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+.dark .shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--neutral-800) 0%,
+    var(--neutral-700) 20%,
+    var(--neutral-800) 40%,
+    var(--neutral-800) 100%
+  );
+  background-size: 1000px 100%;
+}

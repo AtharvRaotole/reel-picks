@@ -5,8 +5,9 @@ import { Movie } from '@/app/types/movie';
 import { Card } from '@/app/components/ui';
 import MoviePoster from '@/app/components/MoviePoster';
 import { Badge } from '@/app/components/ui';
-import { Heart } from 'lucide-react';
+import { Heart, Clock } from 'lucide-react';
 import { useFavorites } from '@/app/lib/hooks/useFavorites';
+import { useReminders, formatTimeRemaining } from '@/app/lib/hooks/useReminders';
 import { useToast } from '@/app/components/ui/ToastProvider';
 import { clsx } from 'clsx';
 
@@ -30,8 +31,11 @@ export default function MovieCard({ movie, priority = false, onClick, showHint =
   const [isFlipped, setIsFlipped] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
+  const { getReminder } = useReminders();
   const { showSuccess, showError } = useToast();
   const favorited = isFavorite(movie.id);
+  const reminder = getReminder(movie.id);
+  const hasUpcomingReminder = reminder && reminder.reminderTime > Date.now();
 
   const year = getYear(movie.releaseDate);
   const rating = movie.voteAverage ? movie.voteAverage.toFixed(1) : 'N/A';
@@ -142,6 +146,20 @@ export default function MovieCard({ movie, priority = false, onClick, showHint =
                 <div className="absolute top-2 right-2 z-10">
                   <Badge variant="primary" size="sm" showIcon>
                     {rating}
+                  </Badge>
+                </div>
+              )}
+
+              {/* Reminder Badge Overlay */}
+              {hasUpcomingReminder && (
+                <div className="absolute top-2 left-2 z-10">
+                  <Badge 
+                    variant="secondary" 
+                    size="sm" 
+                    className="bg-accent-500/90 backdrop-blur-sm text-white border-0"
+                  >
+                    <Clock className="h-3 w-3 mr-1" />
+                    {formatTimeRemaining(reminder.reminderTime)}
                   </Badge>
                 </div>
               )}

@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMovieSearch } from '@/app/lib/hooks/useMovieSearch';
 import { Movie } from '@/app/types/movie';
 import { Input, EmptyState } from '@/app/components/ui';
 import MovieCardSkeleton from '@/app/components/MovieCardSkeleton';
 import MovieCard from '@/app/components/MovieCard';
 import MovieDetails from '@/app/components/MovieDetails';
+import { useRecentlyViewed } from '@/app/lib/hooks/useRecentlyViewed';
 import { AlertCircle } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -66,11 +67,30 @@ export default function MovieSearch() {
 
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  const { addRecentlyViewed } = useRecentlyViewed();
 
   const handleMovieClick = (movieId: number) => {
     setSelectedMovieId(movieId);
     setIsDetailsModalOpen(true);
+    
+    // Add to recently viewed
+    const movie = results?.results.find((m) => Number(m.id) === movieId);
+    if (movie) {
+      addRecentlyViewed(movie);
+    }
   };
+
+  // Listen for recently viewed clicks from header
+  useEffect(() => {
+    const handleOpenMovieDetails = (event: CustomEvent<{ movieId: number }>) => {
+      handleMovieClick(event.detail.movieId);
+    };
+
+    window.addEventListener('openMovieDetails', handleOpenMovieDetails as EventListener);
+    return () => {
+      window.removeEventListener('openMovieDetails', handleOpenMovieDetails as EventListener);
+    };
+  }, [results]);
 
   return (
     <div className="w-full">

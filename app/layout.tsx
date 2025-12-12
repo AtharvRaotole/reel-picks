@@ -8,6 +8,7 @@ import { ToastProvider } from "./components/ui/ToastProvider";
 import { SoundEffectsProvider } from "./components/SoundEffects";
 import { ThemeProvider } from "./components/ThemeProvider";
 import KeyboardShortcutsProvider from "./components/KeyboardShortcutsProvider";
+import ReminderNotificationProvider from "./components/ReminderNotificationProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -43,6 +44,7 @@ export default function RootLayout({
           <SoundEffectsProvider>
             <ToastProvider>
               <KeyboardShortcutsProvider>
+                <ReminderNotificationProvider />
                 <ErrorBoundary>
                   <Header />
                 </ErrorBoundary>
