@@ -42,31 +42,26 @@ export function useKeyboardShortcuts(options: KeyboardShortcutsOptions = {}) {
   const isInputFocusedRef = useRef(false);
   const lastKeyRef = useRef<string | null>(null);
 
-  // Safely get theme toggle function
-  const getToggleTheme = useCallback(() => {
-    try {
-      // Dynamic import to avoid SSR issues
-      const { useTheme } = require('@/app/components/ThemeProvider');
-      const themeContext = useTheme();
-      return themeContext.toggleTheme;
-    } catch {
-      // Fallback: manually toggle dark class
-      return () => {
-        if (typeof document !== 'undefined') {
-          const isDark = document.documentElement.classList.contains('dark');
-          document.documentElement.classList.toggle('dark', !isDark);
-          if (typeof localStorage !== 'undefined') {
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
-          }
-        }
-      };
+  // Safely toggle theme - use direct DOM manipulation to avoid ThemeProvider dependency
+  // This works regardless of whether ThemeProvider is available
+  const toggleTheme = useCallback(() => {
+    if (typeof document === 'undefined') return;
+    
+    const isDark = document.documentElement.classList.contains('dark');
+    document.documentElement.classList.toggle('dark', !isDark);
+    
+    // Update localStorage to persist theme preference
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    }
+    
+    // Dispatch custom event so ThemeProvider can sync if it's available
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('themeChange', { 
+        detail: { theme: isDark ? 'light' : 'dark' } 
+      }));
     }
   }, []);
-
-  const toggleTheme = useCallback(() => {
-    const toggle = getToggleTheme();
-    toggle();
-  }, [getToggleTheme]);
 
   // Check if user is typing in an input/textarea
   const isTypingInInput = useCallback((target: EventTarget | null): boolean => {

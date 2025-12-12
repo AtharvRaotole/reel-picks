@@ -25,6 +25,21 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Listen for theme changes from keyboard shortcuts
+  useEffect(() => {
+    if (!mounted) return;
+
+    const handleThemeChange = (event: CustomEvent<{ theme: Theme }>) => {
+      const newTheme = event.detail.theme;
+      setTheme(newTheme);
+    };
+
+    window.addEventListener('themeChange', handleThemeChange as EventListener);
+    return () => {
+      window.removeEventListener('themeChange', handleThemeChange as EventListener);
+    };
+  }, [mounted]);
+
   const toggleTheme = () => {
     setTheme((prevTheme) => {
       const newTheme = prevTheme === 'light' ? 'dark' : 'light';
