@@ -53,7 +53,7 @@ export default function EmptyState({
     <div
       className={clsx(
         'flex flex-col items-center justify-center text-center py-12 px-4',
-        variant === 'default' && 'rounded-lg bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800',
+        variant === 'default' && 'rounded-lg bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800',
         className
       )}
       {...props}
@@ -63,8 +63,8 @@ export default function EmptyState({
           className={clsx(
             'mb-4 rounded-full p-3',
             variant === 'default'
-              ? 'bg-white dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500'
-              : 'text-neutral-400 dark:text-neutral-500'
+              ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400'
+              : 'text-neutral-500 dark:text-neutral-400'
           )}
           aria-hidden="true"
         >
