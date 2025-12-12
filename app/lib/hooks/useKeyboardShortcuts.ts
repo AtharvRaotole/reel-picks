@@ -2,7 +2,6 @@
 
 import { useEffect, useCallback, useRef, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { useTheme } from '@/app/components/ThemeProvider';
 
 export interface KeyboardShortcutsOptions {
   onFocusSearch?: () => void;
@@ -39,10 +38,35 @@ export function useKeyboardShortcuts(options: KeyboardShortcutsOptions = {}) {
 
   const router = useRouter();
   const pathname = usePathname();
-  const { toggleTheme } = useTheme();
   const [showOverlay, setShowOverlay] = useState(false);
   const isInputFocusedRef = useRef(false);
   const lastKeyRef = useRef<string | null>(null);
+
+  // Safely get theme toggle function
+  const getToggleTheme = useCallback(() => {
+    try {
+      // Dynamic import to avoid SSR issues
+      const { useTheme } = require('@/app/components/ThemeProvider');
+      const themeContext = useTheme();
+      return themeContext.toggleTheme;
+    } catch {
+      // Fallback: manually toggle dark class
+      return () => {
+        if (typeof document !== 'undefined') {
+          const isDark = document.documentElement.classList.contains('dark');
+          document.documentElement.classList.toggle('dark', !isDark);
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+          }
+        }
+      };
+    }
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    const toggle = getToggleTheme();
+    toggle();
+  }, [getToggleTheme]);
 
   // Check if user is typing in an input/textarea
   const isTypingInInput = useCallback((target: EventTarget | null): boolean => {
