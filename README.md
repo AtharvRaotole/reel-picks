@@ -9,7 +9,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-**🌐 Live Demo**: [reel-picks-r1g98598p-atharvraotoles-projects.vercel.app](https://reel-picks-r1g98598p-atharvraotoles-projects.vercel.app) • [Features](#-features) • [Setup & Run](#️-setup--run)
+**🌐 Live Demo**: [reel-picks-qn3mxvjlc-atharvraotoles-projects.vercel.app](https://reel-picks-qn3mxvjlc-atharvraotoles-projects.vercel.app) • [Features](#-features) • [Setup & Run](#️-setup--run)
 
 </div>
 
