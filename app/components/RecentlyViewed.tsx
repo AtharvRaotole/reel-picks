@@ -54,8 +54,6 @@ export default function RecentlyViewed({ onMovieClick }: RecentlyViewedProps) {
     };
   }, [isOpen]);
 
-  if (count === 0) return null;
-
   const handleMovieClick = (movieId: number) => {
     if (onMovieClick) {
       onMovieClick(movieId);
@@ -119,10 +117,18 @@ export default function RecentlyViewed({ onMovieClick }: RecentlyViewedProps) {
             ) : (
               <div className="divide-y divide-neutral-200 dark:divide-neutral-800">
                 {recentlyViewed.map((item) => (
-                  <button
+                  <div
                     key={item.movie.id}
                     onClick={() => handleMovieClick(Number(item.movie.id))}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors text-left group"
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors text-left group cursor-pointer"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleMovieClick(Number(item.movie.id));
+                      }
+                    }}
                     aria-label={`View ${item.movie.title}`}
                   >
                     {/* Poster */}
@@ -160,7 +166,7 @@ export default function RecentlyViewed({ onMovieClick }: RecentlyViewedProps) {
                     >
                       <X className="h-4 w-4" aria-hidden="true" />
                     </button>
-                  </button>
+                  </div>
                 ))}
               </div>
             )}

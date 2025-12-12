@@ -61,16 +61,20 @@ export default function MovieCard({ movie, priority = false, onClick, showHint =
   }, [isFlipped]);
 
   const handleCardClick = (e: React.MouseEvent | React.TouchEvent) => {
-    // On mobile, toggle flip on tap
+    // On mobile, toggle flip on first tap, open details on second tap
     if (window.innerWidth < 768) {
-      e.preventDefault();
-      e.stopPropagation();
-      setIsFlipped(!isFlipped);
-    } else {
-      // On desktop, only navigate if not hovering (click through)
-      if (!isFlipped) {
+      if (isFlipped) {
+        // If already flipped, open details
         onClick();
+      } else {
+        // First tap: flip the card
+        e.preventDefault();
+        e.stopPropagation();
+        setIsFlipped(true);
       }
+    } else {
+      // On desktop, always open details on click
+      onClick();
     }
   };
 
@@ -94,7 +98,7 @@ export default function MovieCard({ movie, priority = false, onClick, showHint =
   return (
     <div
       ref={cardRef}
-      className="group perspective-1000"
+      className="group perspective-1000 h-full min-h-[400px] cursor-pointer"
       onMouseEnter={() => {
         // Desktop: flip on hover
         if (window.innerWidth >= 768) {
@@ -122,13 +126,13 @@ export default function MovieCard({ movie, priority = false, onClick, showHint =
       >
         {/* FRONT SIDE */}
         <div
-          className="absolute inset-0 w-full h-full backface-hidden"
+          className="absolute inset-0 w-full h-full backface-hidden pointer-events-auto"
           style={{
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
           }}
         >
-          <Card hover interactive className="overflow-hidden h-full flex flex-col">
+          <Card hover className="overflow-hidden h-full flex flex-col">
             {/* Poster Image */}
             <div className="relative">
               <MoviePoster
@@ -219,14 +223,14 @@ export default function MovieCard({ movie, priority = false, onClick, showHint =
 
         {/* BACK SIDE */}
         <div
-          className="absolute inset-0 w-full h-full backface-hidden rotate-y-180"
+          className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 pointer-events-auto"
           style={{
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
           }}
         >
-          <Card className="overflow-hidden h-full flex flex-col bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950">
+          <Card hover className="overflow-hidden h-full flex flex-col bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950">
             {/* Gradient Background with Poster Colors */}
             <div className="absolute inset-0 opacity-20">
               <MoviePoster

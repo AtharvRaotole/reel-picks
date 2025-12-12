@@ -55,10 +55,26 @@ function saveRecentlyViewed(movies: RecentlyViewedMovie[]): boolean {
 export function useRecentlyViewed() {
   const [recentlyViewed, setRecentlyViewed] = useState<RecentlyViewedMovie[]>([]);
 
-  // Load on mount
+  // Load on mount and listen for changes
   useEffect(() => {
-    const loaded = loadRecentlyViewed();
-    setRecentlyViewed(loaded);
+    const loadData = () => {
+      const loaded = loadRecentlyViewed();
+      setRecentlyViewed(loaded);
+    };
+
+    // Initial load
+    loadData();
+
+    // Listen for storage changes (from other tabs/windows)
+    window.addEventListener('storage', loadData);
+    
+    // Listen for custom event for same-tab updates
+    window.addEventListener('recentlyViewedUpdated', loadData);
+
+    return () => {
+      window.removeEventListener('storage', loadData);
+      window.removeEventListener('recentlyViewedUpdated', loadData);
+    };
   }, []);
 
   /**
@@ -79,6 +95,12 @@ export function useRecentlyViewed() {
       ].slice(0, MAX_RECENTLY_VIEWED);
 
       saveRecentlyViewed(updated);
+      
+      // Dispatch custom event to notify other components
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('recentlyViewedUpdated'));
+      }
+      
       return updated;
     });
   }, []);
@@ -89,6 +111,11 @@ export function useRecentlyViewed() {
   const clearRecentlyViewed = useCallback(() => {
     setRecentlyViewed([]);
     saveRecentlyViewed([]);
+    
+    // Dispatch custom event to notify other components
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('recentlyViewedUpdated'));
+    }
   }, []);
 
   /**
@@ -98,6 +125,12 @@ export function useRecentlyViewed() {
     setRecentlyViewed((current) => {
       const updated = current.filter((item) => item.movie.id !== movieId);
       saveRecentlyViewed(updated);
+      
+      // Dispatch custom event to notify other components
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('recentlyViewedUpdated'));
+      }
+      
       return updated;
     });
   }, []);
