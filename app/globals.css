@@ -99,11 +99,11 @@ body {
 
 /* Dark mode component overrides for better contrast - only apply in dark mode */
 .dark .bg-white {
-  background-color: #1a1a1a !important;
+  background-color: #0a0a0a !important;
 }
 
 .dark .bg-neutral-50 {
-  background-color: #1a1a1a !important;
+  background-color: #0a0a0a !important;
 }
 
 .dark .bg-neutral-100 {

@@ -37,7 +37,7 @@ export default function EmptyState({
 
     if (typeof icon === 'string' && icon in iconMap) {
       const IconComponent = iconMap[icon as keyof typeof iconMap];
-      return <IconComponent className="h-12 w-12 text-neutral-400" />;
+      return <IconComponent className="h-12 w-12 text-neutral-600 dark:text-neutral-400" />;
     }
 
     if (typeof icon === 'object' && 'type' in icon) {
@@ -53,7 +53,7 @@ export default function EmptyState({
     <div
       className={clsx(
         'flex flex-col items-center justify-center text-center py-12 px-4',
-        variant === 'default' && 'rounded-lg bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800',
+        variant === 'default' && 'rounded-lg bg-white border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-800',
         className
       )}
       {...props}
@@ -63,8 +63,8 @@ export default function EmptyState({
           className={clsx(
             'mb-4 rounded-full p-3',
             variant === 'default'
-              ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400'
-              : 'text-neutral-500 dark:text-neutral-400'
+              ? 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400'
+              : 'text-neutral-600 dark:text-neutral-400'
           )}
           aria-hidden="true"
         >

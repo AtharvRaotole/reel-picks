@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { getMovieDetails, ApiError } from '@/app/lib/api-client';
 import { MovieDetails as MovieDetailsType } from '@/app/types/movie';
 import { useFavorites } from '@/app/lib/hooks/useFavorites';
+import { useConfetti } from '@/app/lib/hooks/useConfetti';
 import { useToast } from '@/app/components/ui/ToastProvider';
 import { useSoundEffects } from '@/app/components/SoundEffects';
 import Modal from '@/app/components/ui/Modal';
 import Button from '@/app/components/ui/Button';
 import Badge from '@/app/components/ui/Badge';
-import Confetti from '@/app/components/Confetti';
 import { Star, Heart, Calendar, Clock, X } from 'lucide-react';
 import MoviePoster from '@/app/components/MoviePoster';
 import { clsx } from 'clsx';
@@ -162,7 +162,6 @@ export default function MovieDetails({
   const [error, setError] = useState<ApiError | null>(null);
   const [notes, setNotes] = useState<string>('');
   const [rating, setRating] = useState<number>(1);
-  const [showConfetti, setShowConfetti] = useState(false);
   const [heartBeat, setHeartBeat] = useState(false);
 
   const {
@@ -175,6 +174,7 @@ export default function MovieDetails({
   } = useFavorites();
   const { showSuccess, showError } = useToast();
   const { play: playSound } = useSoundEffects();
+  const triggerFirstFavoriteConfetti = useConfetti();
 
   // Fetch movie details when modal opens
   useEffect(() => {
@@ -250,16 +250,16 @@ export default function MovieDetails({
         setHeartBeat(true);
         setTimeout(() => setHeartBeat(false), 600);
         
-        // Confetti for first favorite
+        // Confetti and special toast for first favorite
         if (wasFirstFavorite) {
-          setShowConfetti(true);
-          setTimeout(() => setShowConfetti(false), 3000);
+          triggerFirstFavoriteConfetti();
+          showSuccess('🎬 Welcome to your collection!');
+        } else {
+          showSuccess(`${movie.title} added to favorites`);
         }
         
         // Play sound effect
         playSound('favorite');
-        
-        showSuccess(`${movie.title} added to favorites`);
       }
     } catch {
       showError('Failed to update favorites. Please try again.');
@@ -563,7 +563,6 @@ export default function MovieDetails({
         )}
       </div>
     </Modal>
-    <Confetti active={showConfetti} />
     </>
   );
 }
