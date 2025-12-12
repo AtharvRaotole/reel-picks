@@ -9,7 +9,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-**🌐 Live Demo**: [Coming Soon](#) • [Features](#-features) • [Setup & Run](#️-setup--run)
+**🌐 Live Demo**: [reel-picks-r1g98598p-atharvraotoles-projects.vercel.app](https://reel-picks-r1g98598p-atharvraotoles-projects.vercel.app) • [Features](#-features) • [Setup & Run](#️-setup--run)
 
 </div>
 
@@ -23,6 +23,7 @@
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
 - [Setup & Run](#️-setup--run)
+- [Deployment](#-deployment)
 - [Trade-offs & Limitations](#-trade-offs--limitations)
 - [Future Roadmap](#-future-roadmap)
 - [Contributing](#-contributing)
@@ -103,6 +104,65 @@ npm run build    # Build for production
 npm start        # Start production server
 npm run lint     # Run ESLint
 ```
+
+---
+
+## 🚀 Deployment
+
+### Deploy to Vercel (Recommended)
+
+Vercel is the easiest way to deploy Next.js applications with zero configuration.
+
+#### Option 1: Deploy via Vercel Dashboard (Easiest)
+
+1. **Sign up/Login**: Go to [vercel.com](https://vercel.com) and sign in with your GitHub account
+
+2. **Import Project**: 
+   - Click "Add New Project"
+   - Select your `reel-picks` repository
+   - Click "Import"
+
+3. **Configure Environment Variables**:
+   - Add `TMDB_API_KEY` with your TMDB API key
+   - Leave `NEXT_PUBLIC_APP_URL` empty (Vercel sets this automatically)
+
+4. **Deploy**:
+   - Click "Deploy"
+   - Wait for build to complete (~2-3 minutes)
+   - Your app will be live at `your-app.vercel.app`
+
+5. **Update README**: After deployment, update the "Live Demo" link in the README with your Vercel URL
+
+#### Option 2: Deploy via Vercel CLI
+
+```bash
+# Install Vercel CLI (if not already installed)
+npm i -g vercel
+
+# Deploy
+vercel
+
+# Follow the prompts:
+# - Link to existing project or create new
+# - Set environment variables when prompted
+```
+
+### Environment Variables on Vercel
+
+After deployment, you can update environment variables:
+1. Go to your project on Vercel dashboard
+2. Settings → Environment Variables
+3. Add/Edit variables as needed
+4. Redeploy for changes to take effect
+
+### Other Deployment Options
+
+- **Netlify**: Similar to Vercel, supports Next.js
+- **Railway**: Good for full-stack apps
+- **Render**: Free tier available
+- **AWS Amplify**: If you prefer AWS ecosystem
+
+**Note**: Make sure to set `TMDB_API_KEY` environment variable on your hosting platform.
 
 ---
 

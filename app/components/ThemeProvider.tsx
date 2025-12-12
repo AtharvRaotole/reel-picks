@@ -17,11 +17,41 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    // Get theme from localStorage or default to light
+    
+    // Get theme from localStorage or detect system preference
     const savedTheme = localStorage.getItem('theme') as Theme | null;
+    
+    let initialTheme: Theme;
     if (savedTheme && (savedTheme === 'light' || savedTheme === 'dark')) {
-      setTheme(savedTheme);
-      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+      // Use saved preference
+      initialTheme = savedTheme;
+    } else {
+      // No saved preference - check system preference
+      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      initialTheme = systemPrefersDark ? 'dark' : 'light';
+    }
+    
+    setTheme(initialTheme);
+    document.documentElement.classList.toggle('dark', initialTheme === 'dark');
+    
+    // Listen for system preference changes (only if no saved preference)
+    if (!savedTheme) {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+        const newTheme = e.matches ? 'dark' : 'light';
+        setTheme(newTheme);
+        document.documentElement.classList.toggle('dark', newTheme === 'dark');
+      };
+      
+      // Modern browsers
+      if (mediaQuery.addEventListener) {
+        mediaQuery.addEventListener('change', handleSystemThemeChange);
+        return () => mediaQuery.removeEventListener('change', handleSystemThemeChange);
+      } else {
+        // Fallback for older browsers
+        mediaQuery.addListener(handleSystemThemeChange);
+        return () => mediaQuery.removeListener(handleSystemThemeChange);
+      }
     }
   }, []);
 
