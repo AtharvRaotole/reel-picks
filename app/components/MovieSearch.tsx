@@ -83,11 +83,11 @@ function MovieCard({ movie, priority = false, onClick }: MovieCardProps) {
 
         {/* Movie Info */}
         <div className="p-4 flex-1 flex flex-col">
-          <h3 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white mb-2 line-clamp-2 group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors leading-tight" style={{ fontFamily: 'var(--font-playfair), serif' }}>
+          <h3 className="text-base sm:text-lg font-semibold text-neutral-900 dark:text-white mb-2 line-clamp-2 group-hover:text-accent-600 dark:group-hover:text-accent-400 transition-colors leading-tight font-sans">
             {movie.title}
           </h3>
           
-          <div className="flex items-center gap-2 mb-2 text-xs sm:text-sm text-neutral-600 dark:text-neutral-400">
+          <div className="flex items-center gap-2 mb-2 text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 font-sans">
             {year && <span>{year}</span>}
             {year && movie.voteCount && movie.voteCount > 0 && <span aria-hidden="true">•</span>}
             {movie.voteCount && movie.voteCount > 0 && (
@@ -96,7 +96,7 @@ function MovieCard({ movie, priority = false, onClick }: MovieCardProps) {
           </div>
 
           {movie.overview && (
-            <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 line-clamp-3 flex-1 leading-relaxed">
+            <p className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 line-clamp-3 flex-1 leading-relaxed font-sans">
               {truncateText(movie.overview, 120)}
             </p>
           )}
@@ -199,13 +199,13 @@ export default function MovieSearch() {
       {!loading && !error && results && results.results.length > 0 && (
         <div>
           {/* Results Count */}
-          <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400">
+            <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <p className="text-sm sm:text-base text-neutral-700 dark:text-neutral-300 font-sans">
               Found <span className="text-neutral-900 dark:text-white font-semibold">{results.totalResults.toLocaleString()}</span>{' '}
               {results.totalResults === 1 ? 'movie' : 'movies'}
             </p>
             {results.totalPages > 1 && (
-              <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-500">
+              <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 font-sans">
                 Page {results.page} of {results.totalPages}
               </p>
             )}

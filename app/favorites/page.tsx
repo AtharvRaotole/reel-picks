@@ -135,19 +135,19 @@ function FavoriteCard({
       {/* Movie Info */}
       <div className="p-4 flex-1 flex flex-col space-y-3">
         {/* Title */}
-        <h3 className="text-base sm:text-lg font-semibold text-neutral-900 line-clamp-2 group-hover:text-accent-600 transition-colors leading-tight">
+        <h3 className="text-base sm:text-lg font-semibold text-neutral-900 line-clamp-2 group-hover:text-accent-600 transition-colors leading-tight dark:text-white dark:group-hover:text-accent-400 font-sans">
           {movie.title}
         </h3>
 
         {/* Date Added */}
-        <div className="flex items-center gap-1.5 text-xs text-neutral-500">
+        <div className="flex items-center gap-1.5 text-xs text-neutral-700 dark:text-neutral-300 font-sans">
           <Calendar className="h-3 w-3 flex-shrink-0" aria-hidden="true" />
           <span className="truncate">Added {formatDate(dateAdded)}</span>
         </div>
 
         {/* Rating */}
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-neutral-600">
+          <label className="text-xs font-medium text-neutral-700 dark:text-neutral-300 font-sans">
             Your Rating
           </label>
           <div
@@ -159,15 +159,15 @@ function FavoriteCard({
               onChange={(newRating) => onRatingChange(movie.id, newRating)}
               size="sm"
             />
-            <span className="text-xs text-neutral-500 whitespace-nowrap">({rating}/5)</span>
+            <span className="text-xs text-neutral-700 dark:text-neutral-300 whitespace-nowrap font-sans">({rating}/5)</span>
           </div>
         </div>
 
         {/* Notes Preview */}
         {notes && (
-          <div className="pt-2 border-t border-neutral-200 dark:border-neutral-800">
-            <p className="text-xs font-medium text-neutral-600 dark:text-neutral-400 mb-1">Notes</p>
-            <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 line-clamp-2 italic leading-relaxed">
+          <div className="pt-2 border-t border-neutral-200 dark:border-neutral-700">
+            <p className="text-xs font-medium text-neutral-700 mb-1 dark:text-neutral-300 font-sans">Notes</p>
+            <p className="text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 line-clamp-2 italic leading-relaxed font-sans">
               &ldquo;{truncateText(notes, 80)}&rdquo;
             </p>
           </div>
@@ -311,7 +311,7 @@ export default function FavoritesPage() {
           <h1 className="text-4xl sm:text-5xl font-bold text-neutral-900 dark:text-white mb-3 tracking-tight" style={{ fontFamily: 'var(--font-playfair), serif' }}>
             My Favorites
           </h1>
-          <p className="text-lg sm:text-xl text-neutral-600 dark:text-neutral-400 font-light">
+          <p className="text-lg sm:text-xl text-neutral-700 dark:text-neutral-300 font-light font-sans">
             Your personal collection of{' '}
             <span className="text-neutral-900 dark:text-white font-semibold">
               {favoritesCount}

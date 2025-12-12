@@ -72,10 +72,10 @@ export default function EmptyState({
         </div>
       )}
 
-      <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-2">{title}</h3>
+      <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-2 font-sans">{title}</h3>
 
       {description && (
-        <p className="text-sm text-neutral-600 dark:text-neutral-400 max-w-md mb-6">{description}</p>
+        <p className="text-sm text-neutral-700 dark:text-neutral-300 max-w-md mb-6 font-sans leading-relaxed">{description}</p>
       )}
 
       {actionLabel && onAction && (
